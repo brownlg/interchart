@@ -1,22 +1,46 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { makeStyles } from "@material-ui/core/styles";
-import { FaRocket } from 'react-icons/fa';
+
+import EmojiObjectsOutlinedIcon from '@material-ui/icons/EmojiObjectsOutlined';
+import EmojiObjectsRoundedIcon from '@material-ui/icons/EmojiObjectsRounded';
 
 
 const useStyles = makeStyles((theme) =>({
+    animateCircle : {
+        fill : '#fbffdc',
+        animation: `$myEffect 500ms ${theme.transitions.easing.easeInOut}`
+      
+    },
     dataLabel: {
         '&:hover': {
-            fill: 'blue',
+            fill: 'black',
         },     
       },
-    dataQuadrant : {
-            fill: 'white',
-            
-        '&:hover': {
-            fill: 'red',
+      animatedItem: {
+        animation: `$myEffect 3000ms ${theme.transitions.easing.easeInOut}`
+      },
+      animatedItemExiting: {
+        animation: `$myEffectExit 3000ms ${theme.transitions.easing.easeInOut}`,
+        opacity: 0,        
+      },
+      "@keyframes myEffect": {
+        "0%": {
+          opacity: 0,          
         },
-    },
-
+        "100%": {
+          opacity: 1,    
+        }
+      },
+      "@keyframes myEffectExit": {
+        "0%": {
+          opacity: 1,
+          
+        },
+        "100%": {
+          opacity: 0,         
+        }
+      }
+    
     }));
 
 const Interchart =(props) => {
@@ -35,7 +59,7 @@ const Interchart =(props) => {
     const labelXAxis = props.XAxisLabel || "x-axis";
     const labelYAxis = props.YAxisLabel || "y-axis";
  
-    const labelColor = props.labelColor || "white";
+    const labelColor = props.labelColor || "black";
     const dataPoints = props.dataPoints || [];
 
     // ---------------------------------------------------------------------
@@ -101,8 +125,6 @@ const Interchart =(props) => {
     )
 
 
-
-
     const YAxisLabel = (props) => {        
         const [xPos , yPos ] = [ startX + padding - fontHeightAxis / 2, height / 2 ];
         const labelName = props.label || "Y-Axis"
@@ -126,11 +148,11 @@ const Interchart =(props) => {
     };
 
     const PointLabel = (props) => {
-        const [x , y ] = [ props.x, props.y+fontHeightAxis+5];
+        const [x , y ] = [ props.x, props.y-fontHeightAxis-11];
         const labelName = props.label || "X-Axis"
 
         return (
-            <text  x={x} y={y} className={classes.dataLabel} font='roboto' fill={labelColor} fontSize="1em" textAnchor="middle" dominantBaseline="central">
+            <text  x={x} y={y} className={classes.dataLabel} font='roboto' fill={labelColor} fontSize="1.25em" textAnchor="middle" dominantBaseline="central">
                 {labelName}
             </text>
         )
@@ -143,14 +165,16 @@ const Interchart =(props) => {
 
            
         return (     
-            <React.Fragment>
-                <circle key={`${"circle_b_index_" + index}`}  {...mouseHoverEvents} cx={x} cy={y} r="25" strokeWidth="0" fill="transparent"  />            
-                {isHovering && <circle key={`${"circle_l_index_" + index}`} {...mouseHoverEvents}  cx={x} cy={y} r="18" stroke="grey" strokeWidth="1" fill="yellow" /> }
-                <circle key={`${"circle_index_" + index}`} {...mouseHoverEvents}  cx={x} cy={y} r="15" stroke="grey" strokeWidth="1" fill="gray" />            
-                
+            <React.Fragment>                
+                {isHovering && <circle key={`${"circle_l_index_" + index}`}  cx={x} cy={y} className={classes.animateCircle} r="18" stroke="gray" strokeWidth="1" /> }
+                                
+                <foreignObject x={x-12} y={y-12} width="30" height="30"  >                    
+                    {isHovering && < EmojiObjectsOutlinedIcon />}
+                    {!isHovering && <EmojiObjectsRoundedIcon />}
+                </foreignObject>
     
-                {isHovering && <PointLabel key={`${"circlelabel_index_" + index}`} {...mouseHoverEvents} x={x} y={y} label={label} />}
-                
+                {isHovering && <PointLabel key={`${"circlelabel_index_" + index}`}  x={x} y={y} label={label} />}
+                <circle key={`${"circle_b_index_" + index}`}  {...mouseHoverEvents} cx={x} cy={y} r="25" strokeWidth="0" fill="transparent"  />            
         </React.Fragment>
        );
     }

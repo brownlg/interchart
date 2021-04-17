@@ -21,7 +21,7 @@ function App() {
     () =>
       createMuiTheme({  
         palette: {
-          type: darkMode ? 'light' : 'dark',
+          type: darkMode ? 'dark' : 'light',
         },
       }),
     [darkMode],
@@ -36,7 +36,7 @@ function App() {
     let i=0;
     let arr = [];
     for (i=0;i<10;i++){
-      const myLabelName = "idea_" + i;
+      const myLabelName = "My idea " + i;
       arr.push({
         x: Math.floor(Math.random() * 500),
         y: Math.floor(Math.random() * 500),
@@ -49,7 +49,7 @@ function App() {
   const useStyles = makeStyles((theme) =>({
     container: {
         margin: theme.spacing(0.5),
-        backgroundColor: '#0055', 
+        //backgroundColor: '#0055', 
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
@@ -57,7 +57,7 @@ function App() {
     },
     
     table : {
-        backgroundColor: '#12D',   
+        //backgroundColor: '#12D',   
         width: '50%',
     },
 
@@ -99,7 +99,7 @@ function App() {
         </div>
         <div className={classes.chart}>
           <Interchart
-            height = "400"
+            height = "600"
             width = "600"
             dataPoints = { dataSet } 
             XAxisLabel = "Risk or Effort"
