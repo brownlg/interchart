@@ -1,11 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
-import React, { useState } from "react";
+import React from "react";
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import VirtualizedTable from './components/ReactVirtualizedTable';
 
 import Interchart from './components/Interchart/Interchart';
 
@@ -58,11 +57,11 @@ function App() {
     
     table : {
         //backgroundColor: '#12D',   
-        width: '50%',
+        width: '30%',
     },
 
     chart : {
-        width: '50%',
+        width: '70%',
     },
     })
   );
@@ -93,10 +92,7 @@ function App() {
   return (
     <ThemeProvider theme= { theme } >
       <CssBaseline />
-      <div className={classes.container}>
-        <div className={classes.table}>
-          
-        </div>
+      <div className={classes.container}>        
         <div className={classes.chart}>
           <Interchart
             height = "600"
@@ -105,6 +101,9 @@ function App() {
             XAxisLabel = "Risk or Effort"
             YAxisLabel = "Benefits"
           />
+        </div>
+        <div className={classes.table}>
+          
         </div>
       </div>
 

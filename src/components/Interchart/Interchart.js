@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import EmojiObjectsOutlinedIcon from '@material-ui/icons/EmojiObjectsOutlined';
 import EmojiObjectsRoundedIcon from '@material-ui/icons/EmojiObjectsRounded';
+import '../../index.css';
 
 
 const useStyles = makeStyles((theme) =>({
@@ -62,6 +63,9 @@ const Interchart =(props) => {
     const labelColor = props.labelColor || "black";
     const dataPoints = props.dataPoints || [];
 
+    const dataWidth = width - 2*padding;
+    const dataHeight = height - 2*padding;
+
     // ---------------------------------------------------------------------
 
     useEffect(() => {
@@ -84,18 +88,21 @@ const Interchart =(props) => {
     const Axis = (props) => (
         <polyline      
           fill="none"      
-          stroke="#ccc"      
-          strokeWidth="3"      
+          stroke="#000"      
+          strokeWidth="1"      
           points={props.points}
+          shapeRendering="crispEdges"
         />      
         )
-    
+        
     const QuadrantLine = (props) => (
         <polyline      
           fill="none"      
-          stroke="#555"      
-          strokeWidth="1"      
+          stroke="#ccc"      
+          strokeWidth=".5"      
           points={props.points}
+          //shape-rendering="geometricPrecision"
+          shapeRendering="crispEdges"
         />      
     )
 
@@ -126,24 +133,49 @@ const Interchart =(props) => {
 
 
     const YAxisLabel = (props) => {        
-        const [xPos , yPos ] = [ startX + padding - fontHeightAxis / 2, height / 2 ];
-        const labelName = props.label || "Y-Axis"
+        const [xPos , yPos ] = [ startX + padding - fontHeightAxis / 2, height ];
+        const labelName = props.label1 || "Benefits"
+        const labelName1 = props.label1 || "Low"
+        const labelName2 = props.label2 || "High"
+
     
         return (
-            <text x={xPos} y={yPos} font='roboto' fill={labelColor} fontSize="1em" textAnchor="middle" dominantBaseline="central" transform={`${"rotate(-90, "+xPos+", "+yPos+")"}`}>
-                {labelName}
-            </text>
+            <React.Fragment>
+                <text x={xPos} y={yPos*.75} fontFamily='ArchitectsDaughter' fill={labelColor} shapeRendering="geometricPrecision" fontSize="1.2em" textAnchor="middle" dominantBaseline="central" transform={`${"rotate(-90, "+xPos+", "+yPos*.75+")"}`}>
+                    {labelName1}
+                </text>
+
+                <text x={xPos} y={yPos*.5} fontFamily='ArchitectsDaughter' fill={labelColor} shapeRendering="geometricPrecision" fontSize="1.4em" textAnchor="middle" dominantBaseline="central" transform={`${"rotate(-90, "+xPos+", "+yPos*.5+")"}`}>
+                    {labelName}
+                </text>
+
+                <text x={xPos} y={yPos*.25} fontFamily='ArchitectsDaughter' fill={labelColor} shapeRendering="crispEdges" fontSize="1.2em" textAnchor="middle" dominantBaseline="central" transform={`${"rotate(-90, "+xPos+", "+yPos*.25+")"}`}>
+                    {labelName2}
+                </text>
+            </React.Fragment>
         )
     };
 
     const XAxisLabel = (props) => {
-        const [xPos , yPos ] = [ startX + width / 2, height - fontHeightAxis / 2 ];
-        const labelName = props.label || "X-Axis"
+        const [xPos , yPos ] = [ startX + width, height - fontHeightAxis / 2 ];
+        const labelName = props.label || "Risk"
+        const labelName1 = props.label1 || "Low"
+        const labelName2 = props.label2 || "High"
     
         return (
-            <text x={xPos} y={yPos} font='roboto' fill={labelColor} fontSize="1em" textAnchor="middle" dominantBaseline="central">
-                {labelName}
-            </text>
+            <React.Fragment>
+                <text x={xPos*.25} y={yPos} fontFamily='ArchitectsDaughter' fill={labelColor} fontSize="1.2em" textAnchor="middle" dominantBaseline="central">
+                    {labelName1}
+                </text>
+
+                <text x={xPos*.5} y={yPos} fontFamily='ArchitectsDaughter' fill={labelColor} fontSize="1.4em" textAnchor="middle" dominantBaseline="central">
+                    {labelName}
+                </text>
+
+                <text x={xPos*.75} y={yPos} fontFamily='ArchitectsDaughter' fill={labelColor} fontSize="1.2em" textAnchor="middle" dominantBaseline="central">
+                    {labelName2}
+                </text>
+            </React.Fragment>
         )
     };
 
@@ -152,7 +184,7 @@ const Interchart =(props) => {
         const labelName = props.label || "X-Axis"
 
         return (
-            <text  x={x} y={y} className={classes.dataLabel} font='roboto' fill={labelColor} fontSize="1.25em" textAnchor="middle" dominantBaseline="central">
+            <text  x={x} y={y} className={classes.dataLabel} fontFamily='ArchitectsDaughter' fill={labelColor} fontSize="1.25em" textAnchor="middle" dominantBaseline="central">
                 {labelName}
             </text>
         )
@@ -162,15 +194,16 @@ const Interchart =(props) => {
         const [isHovering, mouseHoverEvents] = useHover();
         const {x,y,label} = props
         const index = 0;
-
+        const onColor = props.onColor || "#000";
+        const offColor = props.offColor || "#0017ff";
            
         return (     
             <React.Fragment>                
                 {isHovering && <circle key={`${"circle_l_index_" + index}`}  cx={x} cy={y} className={classes.animateCircle} r="18" stroke="gray" strokeWidth="1" /> }
                                 
                 <foreignObject x={x-12} y={y-12} width="30" height="30"  >                    
-                    {isHovering && < EmojiObjectsOutlinedIcon />}
-                    {!isHovering && <EmojiObjectsRoundedIcon />}
+                    {isHovering && < EmojiObjectsOutlinedIcon  style={{ color:onColor }} />}
+                    {!isHovering && <EmojiObjectsRoundedIcon style={{ color:offColor }} />}
                 </foreignObject>
     
                 {isHovering && <PointLabel key={`${"circlelabel_index_" + index}`}  x={x} y={y} label={label} />}
@@ -184,13 +217,20 @@ const Interchart =(props) => {
 
         const ptX = 50;
         const ptY = 50;
-
+        
         const circles = points.map((point, index)=> {
             const x = point.x + padding;
             const y = height - point.y - padding;
-                        
+
+            // Calculate the quandrant:
+            let myColor = "#000";            
+            myColor = (x-padding < dataWidth/2) && (y-padding<dataHeight/2) ? "#5e8c31" : myColor;                        
+            myColor = (x-padding < dataWidth/2) && (y-padding>=dataHeight/2) ? "#ff7034" : myColor;                        
+            myColor = (x-padding >= dataWidth/2) && (y-padding<dataHeight/2) ? "#f2c649" : myColor;                        
+            myColor = (x-padding >= dataWidth/2) && (y-padding>=dataHeight/2) ? "#c32148" : myColor;                        
+            
             return(
-                <DataPoint x={x} y={y} label={point.label} />                  
+                <DataPoint {...props} key={"dp"+index }x={x} y={y} label={point.label} offColor={myColor}  />                  
             )});
              
         return (            
@@ -210,8 +250,17 @@ const Interchart =(props) => {
 
     }
 
+    /*
+  <style>
+                    { `@font-face {
+                            font-family: 'Pacifico';
+                            src: url(https://fonts.gstatic.com/s/pacifico/v13/FwZY7-Qmy14u9lezJ-6H6MmBp0u-.woff2) format('woff2');     
+                    } ` }
+                </style>
+    */
+
     return (
-        <svg width={width} height={height} onClick={clickEvent}>
+        <svg width={width} height={height} onClick={clickEvent} >            
             <QuandrantAxis />
             <XAxis/>
             <YAxis/> 
