@@ -8,6 +8,14 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import Interchart from './components/Interchart/Interchart';
 
+
+const cbDataPointEventSelected = () => (console.log("Call back for selected item"));
+const cbDataPointEdit = () => (console.log("Call back for edit the data"));
+const cbDataPointEventMoved = () => {
+    console.log("Call back for a data point that is moved on chart")
+    return true;
+  };
+
 function App() {
 
   const [darkMode, setDarkMode] = React.useState(false);

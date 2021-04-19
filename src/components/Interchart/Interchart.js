@@ -45,9 +45,10 @@ const useStyles = makeStyles((theme) =>({
     }));
 
 const Interchart =(props) => {
-    const [points, setPoints] = useState();
+    // const [points, setPoints] = useState();
     const classes = useStyles(props);  
 
+    const [selectedDataPoint, setSelectedDataPoint] = useState();
 
     // Properties --------------------------------------------------------
     const padding = props.padding || 25;
@@ -74,11 +75,18 @@ const Interchart =(props) => {
 
       
     const useHover = () => {
-        const [hovered, setHovered] = useState();
+        const [hovered, setHovered] = useState(false);
+        
         
         const eventHandlers = useMemo(() => ({
-            onMouseOver() { setHovered(true); },
-            onMouseOut() { setHovered(false); }
+            onMouseOver(event) { 
+                setSelectedDataPoint(event.target.id);
+                setHovered(true);
+            },
+            onMouseOut() { 
+                setSelectedDataPoint(false);
+                setHovered(false); 
+            },
         }), []);
         
         return [hovered, eventHandlers];
@@ -196,7 +204,7 @@ const Interchart =(props) => {
         const index = 0;
         const onColor = props.onColor || "#000";
         const offColor = props.offColor || "#0017ff";
-           
+        
         return (     
             <React.Fragment>                
                 {isHovering && <circle key={`${"circle_l_index_" + index}`}  cx={x} cy={y} className={classes.animateCircle} r="18" stroke="gray" strokeWidth="1" /> }
@@ -207,10 +215,22 @@ const Interchart =(props) => {
                 </foreignObject>
     
                 {isHovering && <PointLabel key={`${"circlelabel_index_" + index}`}  x={x} y={y} label={label} />}
-                <circle key={`${"circle_b_index_" + index}`}  {...mouseHoverEvents} cx={x} cy={y} r="25" strokeWidth="0" fill="transparent"  />            
+                <circle id = {label} key={`${"circle_b_index_" + index}`} {...mouseHoverEvents} cx={x} cy={y} r="25" strokeWidth="0" fill="transparent"  />            
         </React.Fragment>
        );
     }
+
+    const clickEvent = (event) => {
+        var e = event.target;
+        var dim = e.getBoundingClientRect();
+        var x = event.clientX - dim.left;
+        var y = event.clientY - dim.top;
+        console.log("x: "+x+" y:"+y);
+
+        selectedDataPoint && console.log("selected item" + selectedDataPoint);
+        
+    }
+    
 
     const DataPoints = (props) => {
         const points = props.dataPoints || [];
@@ -240,16 +260,8 @@ const Interchart =(props) => {
            );
     }
 
-    const clickEvent = (event) => {
-        var e = event.target;
-        var dim = e.getBoundingClientRect();
-        var x = event.clientX - dim.left;
-        var y = event.clientY - dim.top;
-        console.log("x: "+x+" y:"+y);
 
-
-    }
-
+    
     /*
   <style>
                     { `@font-face {
@@ -266,7 +278,7 @@ const Interchart =(props) => {
             <YAxis/> 
             <YAxisLabel label = {labelYAxis} />
             <XAxisLabel label = {labelXAxis} />
-            <DataPoints dataPoints = {dataPoints}/>   
+            <DataPoints dataPoints = {dataPoints}  />   
         </svg>
     );
 };
