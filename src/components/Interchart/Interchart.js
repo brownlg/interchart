@@ -49,7 +49,8 @@ const Interchart =(props) => {
     const classes = useStyles(props);  
 
     const [selectedDataPoint, setSelectedDataPoint] = useState();
-
+    const [activeDataPoint, setActiveDataPoint] = useState();
+    
     // Properties --------------------------------------------------------
     const padding = props.padding || 25;
     const fontHeightAxis = props.fontHeightAxis || 20;
@@ -76,8 +77,7 @@ const Interchart =(props) => {
       
     const useHover = () => {
         const [hovered, setHovered] = useState(false);
-        
-        
+             
         const eventHandlers = useMemo(() => ({
             onMouseOver(event) { 
                 setSelectedDataPoint(event.target.id);
@@ -87,6 +87,11 @@ const Interchart =(props) => {
                 setSelectedDataPoint(false);
                 setHovered(false); 
             },
+            onDrag(event) {
+                setSelectedDataPoint(event.target.id);
+                setHovered(true);
+
+            }
         }), []);
         
         return [hovered, eventHandlers];
@@ -200,22 +205,25 @@ const Interchart =(props) => {
 
     const DataPoint = (props) => {
         const [isHovering, mouseHoverEvents] = useHover();
+        const [dragging, setDragging] = useState();
         const {x,y,label} = props
         const index = 0;
         const onColor = props.onColor || "#000";
         const offColor = props.offColor || "#0017ff";
+
+        const isActive = activeDataPoint === label;
         
         return (     
             <React.Fragment>                
-                {isHovering && <circle key={`${"circle_l_index_" + index}`}  cx={x} cy={y} className={classes.animateCircle} r="18" stroke="gray" strokeWidth="1" /> }
+                {(isHovering||isActive) && <circle key={`${"circle_l_index_" + index}`}  {...mouseHoverEvents} draggable='true' cx={x} cy={y} className= {`${ isActive || classes.animateCircle }`} fill="white" r="18" stroke="gray" strokeWidth="1" /> }
                                 
                 <foreignObject x={x-12} y={y-12} width="30" height="30"  >                    
-                    {isHovering && < EmojiObjectsOutlinedIcon  style={{ color:onColor }} />}
-                    {!isHovering && <EmojiObjectsRoundedIcon style={{ color:offColor }} />}
+                    {(isHovering||isActive) && <EmojiObjectsOutlinedIcon style={{ color:onColor }} />}
+                    {(!isHovering||isActive) && <EmojiObjectsRoundedIcon style={{ color:offColor }} />}
                 </foreignObject>
     
-                {isHovering && <PointLabel key={`${"circlelabel_index_" + index}`}  x={x} y={y} label={label} />}
-                <circle id = {label} key={`${"circle_b_index_" + index}`} {...mouseHoverEvents} cx={x} cy={y} r="25" strokeWidth="0" fill="transparent"  />            
+                {(isHovering||isActive) && <PointLabel key={`${"circlelabel_index_" + index}`}  x={x} y={y} label={label} />}
+                <circle id = {label} key={`${"circle_b_index_" + index}`} draggable = 'true' {...mouseHoverEvents} cx={x} cy={y} r="25" strokeWidth="0" fill="transparent"  />            
         </React.Fragment>
        );
     }
@@ -226,9 +234,13 @@ const Interchart =(props) => {
         var x = event.clientX - dim.left;
         var y = event.clientY - dim.top;
         console.log("x: "+x+" y:"+y);
-
-        selectedDataPoint && console.log("selected item" + selectedDataPoint);
         
+        if (selectedDataPoint) {
+            setActiveDataPoint(selectedDataPoint);
+        }
+        
+        selectedDataPoint && console.log("selected item" + selectedDataPoint);        
+        activeDataPoint && console.log('active data point' + activeDataPoint);        
     }
     
 
