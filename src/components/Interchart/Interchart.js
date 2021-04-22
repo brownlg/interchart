@@ -5,6 +5,7 @@ import EmojiObjectsOutlinedIcon from '@material-ui/icons/EmojiObjectsOutlined';
 import EmojiObjectsRoundedIcon from '@material-ui/icons/EmojiObjectsRounded';
 import '../../index.css';
 
+import CircleMoveable from './CircleMoveable';
 
 const useStyles = makeStyles((theme) =>({
     animateCircle : {
@@ -205,7 +206,7 @@ const Interchart =(props) => {
 
     const DataPoint = (props) => {
         const [isHovering, mouseHoverEvents] = useHover();
-        const [dragging, setDragging] = useState();
+        
         const {x,y,label} = props
         const index = 0;
         const onColor = props.onColor || "#000";
@@ -291,6 +292,8 @@ const Interchart =(props) => {
             <YAxisLabel label = {labelYAxis} />
             <XAxisLabel label = {labelXAxis} />
             <DataPoints dataPoints = {dataPoints}  />   
+
+            <CircleMoveable />
         </svg>
     );
 };
