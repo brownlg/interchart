@@ -28,7 +28,7 @@ function App() {
     () =>
       createMuiTheme({  
         palette: {
-          type: darkMode ? 'dark' : 'light',
+          type: darkMode ? 'light' : 'dark',
         },
       }),
     [darkMode],
@@ -111,7 +111,7 @@ function App() {
           />
         </div>
         <div className={classes.table}>
-          
+      
         </div>
       </div>
 

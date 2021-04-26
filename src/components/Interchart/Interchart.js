@@ -285,15 +285,14 @@ const Interchart =(props) => {
     */
 
     return (
-        <svg width={width} height={height} onClick={clickEvent} >            
+        // <svg width={width} height={height} onClick={clickEvent} >            
+        <svg viewBox={ `${"0 0 "+width+" "+height}` } onClick={clickEvent} >            
             <QuandrantAxis />
             <XAxis/>
             <YAxis/> 
             <YAxisLabel label = {labelYAxis} />
             <XAxisLabel label = {labelXAxis} />
             <DataPoints dataPoints = {dataPoints}  />   
-
-            <CircleMoveable />
         </svg>
     );
 };
